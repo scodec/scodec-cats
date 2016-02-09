@@ -11,7 +11,7 @@ lazy val root = project.in(file(".")).aggregate(coreJVM, coreJS).settings(common
   publishArtifact := false
 )
 
-val catsVersion = "0.3.0-SNAPSHOT"
+val catsVersion = "0.4.0"
 
 lazy val core = crossProject.in(file(".")).
   enablePlugins(BuildInfoPlugin).
@@ -20,10 +20,10 @@ lazy val core = crossProject.in(file(".")).
   jvmSettings(scodecPrimaryModuleJvm: _*).
   settings(
     libraryDependencies ++= Seq(
-      "org.scodec" %%% "scodec-core" % "1.9.0-SNAPSHOT",
-      "org.spire-math" %%% "cats-core" % catsVersion,
+      "org.scodec" %%% "scodec-core" % "1.9.0",
+      "org.typelevel" %%% "cats-core" % catsVersion,
+      "org.typelevel" %%% "cats-laws" % catsVersion % "test",
       "org.scalatest" %%% "scalatest" % "3.0.0-M7" % "test",
-      "org.spire-math" %%% "cats-laws" % catsVersion % "test",
       "org.typelevel" %%% "discipline" % "0.4" % "test"
     )
   ).

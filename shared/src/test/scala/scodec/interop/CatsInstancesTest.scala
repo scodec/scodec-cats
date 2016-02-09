@@ -14,17 +14,17 @@ import org.scalatest.{ FunSuite, Matchers }
 import org.typelevel.discipline.scalatest.Discipline
 
 class CatsInstancesTests extends FunSuite with Matchers with Discipline {
-  implicit val arbBitVector: Arbitrary[BitVector] =
+  implicit lazy val arbBitVector: Arbitrary[BitVector] =
     Arbitrary(Gen.containerOf[Array, Byte](arbitrary[Byte]).map { b => BitVector(b) })
 
-  implicit val shrinkBitVector: Shrink[BitVector] = Shrink { b =>
+  implicit lazy val shrinkBitVector: Shrink[BitVector] = Shrink { b =>
     shrink(b.bytes.toArray) map { s => BitVector(s) }
   }
 
-  implicit val arbByteVector: Arbitrary[ByteVector] =
+  implicit lazy val arbByteVector: Arbitrary[ByteVector] =
     Arbitrary(Gen.containerOf[Array, Byte](arbitrary[Byte]).map { b => ByteVector(b) })
 
-  implicit val shrinkByteVector: Shrink[ByteVector] = Shrink { b =>
+  implicit lazy val shrinkByteVector: Shrink[ByteVector] = Shrink { b =>
     shrink(b.toArray) map { s => ByteVector(s) }
   }
 
@@ -34,40 +34,33 @@ class CatsInstancesTests extends FunSuite with Matchers with Discipline {
     }
   }
 
-  implicit val arbKAttempt: ArbitraryK[Attempt] = new ArbitraryK[Attempt] {
-    def synthesize[A: Arbitrary]: Arbitrary[Attempt[A]] = {
-      val successful = for {
-        value <- arbitrary[A]
-      } yield Attempt.successful(value)
-      val failure = for {
-        err <- arbitrary[Err]
-      } yield Attempt.failure(err)
-      Arbitrary(Gen.oneOf(successful, failure))
-    }
+  implicit def arbAttempt[A: Arbitrary]: Arbitrary[Attempt[A]] = {
+    val successful = for {
+      value <- arbitrary[A]
+    } yield Attempt.successful(value)
+    val failure = for {
+      err <- arbitrary[Err]
+    } yield Attempt.failure(err)
+    Arbitrary(Gen.oneOf(successful, failure))
   }
 
-  implicit val eqKAttempt: EqK[Attempt] = new EqK[Attempt] {
-    def synthesize[A: Eq]: Eq[Attempt[A]] = Eq[Attempt[A]]
+  implicit def arbDecoder[A: Arbitrary]: Arbitrary[Decoder[A]] = {
+    val successful = for {
+      toConsume <- Gen.chooseNum(0, 32)
+      value <- arbitrary[A]
+    } yield Decoder(b => Attempt.successful(DecodeResult(value, b.drop(toConsume.toLong))))
+    val failure = Gen.const(scodec.codecs.fail(Err("failure")))
+    Arbitrary(Gen.frequency(10 -> failure, 90 -> successful))
   }
 
-  implicit val arbKDecoder: ArbitraryK[Decoder] = new ArbitraryK[Decoder] {
-    def synthesize[A: Arbitrary]: Arbitrary[Decoder[A]] = {
-      val successful = for {
-        toConsume <- Gen.chooseNum(0, 32)
-        value <- arbitrary[A]
-      } yield Decoder(b => Attempt.successful(DecodeResult(value, b.drop(toConsume.toLong))))
-      val failure = Gen.const(scodec.codecs.fail(Err("failure")))
-      Arbitrary(Gen.frequency(10 -> failure, 90 -> successful))
-    }
+  implicit lazy val arbErr: Arbitrary[Err] = Arbitrary(Gen.alphaStr.map(msg => Err(msg)))
+  implicit def tripleEq[A, C, B](implicit A: Eq[A], B: Eq[B], C: Eq[C]): Eq[(A, B, C)] = new Eq[(A, B, C)] {
+    def eqv(x: (A, B, C), y: (A, B, C)) = A.eqv(x._1, y._1) && B.eqv(x._2, y._2) && C.eqv(x._3, y._3)
   }
-
-  implicit val arbDecoderInt: Arbitrary[Decoder[Int]] = arbKDecoder.synthesize[Int]
-
-  implicit val arbErr: Arbitrary[Err] = Arbitrary(Gen.alphaStr.map(msg => Err(msg)))
 
   checkAll("BitVector", GroupLaws[BitVector].monoid)
   checkAll("ByteVector", GroupLaws[ByteVector].monoid)
   checkAll("Decoder[Int]", GroupLaws[Decoder[Int]].monoid)
-  // checkAll("Decoder", MonadTests[Decoder].monad[Int, Int, Int]) https://github.com/non/cats/issues/515#issuecomment-137458884
+  checkAll("Decoder", MonadTests[Decoder].monad[Int, Int, Int])
   checkAll("Attempt", MonadErrorTests[Attempt, Err].monadError[Int, Int, Int])
 }
