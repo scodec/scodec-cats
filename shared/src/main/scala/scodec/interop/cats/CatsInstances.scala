@@ -1,11 +1,12 @@
 package scodec.interop.cats
 
 import language.higherKinds
+import scala.annotation.tailrec
 
 import scodec.bits._
 import scodec._
 
-import algebra.{ Eq, Monoid, Semigroup }
+import _root_.cats.kernel.{ Eq, Monoid, Semigroup }
 
 import _root_.cats._
 import _root_.cats.functor._
@@ -35,13 +36,25 @@ private[cats] abstract class CatsInstances extends CatsInstancesLowPriority {
   implicit val ErrEqInstance: Eq[Err] = Eq.fromUniversalEquals
   implicit val ErrShowInstance: Show[Err] = Show.fromToString
 
-  implicit val AttemptMonadErrorInstance: MonadError[Attempt, Err] = new MonadError[Attempt, Err] {
-    def pure[A](a: A) = Attempt.successful(a)
-    def flatMap[A, B](fa: Attempt[A])(f: A => Attempt[B]) = fa flatMap f
-    def raiseError[A](e: Err) = Attempt.failure(e)
-    def handleErrorWith[A](fa: Attempt[A])(f: Err => Attempt[A]) =
-      fa.fold(f, Attempt.successful)
+  implicit val AttemptMonadErrorInstance: MonadError[Attempt, Err] with RecursiveTailRecM[Attempt] = {
+    new MonadError[Attempt, Err] with RecursiveTailRecM[Attempt] {
+      def pure[A](a: A) = Attempt.successful(a)
+      def flatMap[A, B](fa: Attempt[A])(f: A => Attempt[B]) = fa flatMap f
+      def raiseError[A](e: Err) = Attempt.failure(e)
+      def handleErrorWith[A](fa: Attempt[A])(f: Err => Attempt[A]) =
+        fa.fold(f, Attempt.successful)
+
+      @tailrec
+      override def tailRecM[A, B](a: A)(f: A => Attempt[Either[A, B]]): Attempt[B] = {
+        f(a) match {
+          case fail @ Attempt.Failure(_) => fail
+          case Attempt.Successful(Left(a)) => tailRecM(a)(f)
+          case Attempt.Successful(Right(b)) => Attempt.Successful(b)
+        }
+      }
+    }
   }
+
   implicit def AttemptEqInstance[A: Eq]: Eq[Attempt[A]] = Eq.instance { (l, r) =>
     l match {
       case Attempt.Successful(la) =>
@@ -79,10 +92,26 @@ private[cats] abstract class CatsInstances extends CatsInstancesLowPriority {
     s"DecodeResult(${res.value.show},${res.remainder.show})"
   }
 
-  implicit val DecoderMonadInstance: Monad[Decoder] = new Monad[Decoder] {
+  implicit val DecoderMonadInstance: Monad[Decoder] with RecursiveTailRecM[Decoder] = new Monad[Decoder] with RecursiveTailRecM[Decoder] {
+
     def pure[A](a: A) = Decoder.point(a)
+
     def flatMap[A, B](fa: Decoder[A])(f: A => Decoder[B]) = fa flatMap f
+
+    override def tailRecM[A, B](a: A)(f: A => Decoder[Either[A, B]]): Decoder[B] = new Decoder[B] {
+      override def decode(bits: BitVector): Attempt[DecodeResult[B]] = {
+        f(a).decode(bits).flatMap { dr: DecodeResult[Either[A, B]] =>
+          AttemptMonadErrorInstance.tailRecM(dr) { dr: DecodeResult[Either[A, B]] =>
+            dr.value match {
+              case Left(a) => f(a).decode(dr.remainder).map(Left(_))
+              case Right(b) => Attempt.successful(Right(DecodeResult(b, dr.remainder)))
+            }
+          }
+        }
+      }
+    }
   }
+
   implicit def DecoderMonoidInstance[A](implicit A: Monoid[A]): Monoid[Decoder[A]] =
     new DecoderSemigroup[A]() with Monoid[Decoder[A]] {
       def empty = Decoder.point(A.empty)
