@@ -4,14 +4,17 @@ import com.typesafe.tools.mima.plugin.MimaKeys._
 val commonSettings = Seq(
   scodecModule := "scodec-cats",
   rootPackage := "scodec.cats",
-  contributors ++= Seq(Contributor("mpilquist", "Michael Pilquist"))
+  contributors ++= Seq(
+    Contributor("mpilquist", "Michael Pilquist"),
+    Contributor("durban", "Daniel Urban")
+  )
 )
 
 lazy val root = project.in(file(".")).aggregate(coreJVM, coreJS).settings(commonSettings: _*).settings(
   publishArtifact := false
 )
 
-val catsVersion = "0.4.0"
+val catsVersion = "0.7.2"
 
 lazy val core = crossProject.in(file(".")).
   enablePlugins(BuildInfoPlugin).
@@ -20,7 +23,7 @@ lazy val core = crossProject.in(file(".")).
   jvmSettings(scodecPrimaryModuleJvm: _*).
   settings(
     libraryDependencies ++= Seq(
-      "org.scodec" %%% "scodec-core" % "1.9.0",
+      "org.scodec" %%% "scodec-core" % "1.10.2",
       "org.typelevel" %%% "cats-core" % catsVersion,
       "org.typelevel" %%% "cats-laws" % catsVersion % "test",
       "org.scalatest" %%% "scalatest" % "3.0.0-M7" % "test",

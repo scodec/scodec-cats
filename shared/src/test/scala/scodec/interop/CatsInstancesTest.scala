@@ -5,8 +5,8 @@ import scodec.bits._
 
 import _root_.cats.implicits._
 import _root_.cats.laws.discipline._
-import algebra.Eq
-import algebra.laws.GroupLaws
+import _root_.cats.kernel.Eq
+import _root_.cats.kernel.laws.GroupLaws
 import org.scalacheck.{ Arbitrary, Gen, Shrink }
 import Arbitrary.arbitrary
 import Shrink.shrink
