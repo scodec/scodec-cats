@@ -28,8 +28,9 @@ class CatsInstancesTests extends FunSuite with Matchers with Discipline {
     shrink(b.toArray) map { s => ByteVector(s) }
   }
 
+  // This is pretty dodgy...
   implicit def eqDecoder[A: Eq : Arbitrary]: Eq[Decoder[A]] = Eq.instance { (l, r) =>
-    Stream.continually(arbitrary[BitVector].sample).flatten.take(10000).forall { b =>
+    Stream.continually(arbitrary[BitVector].sample).flatten.take(100).forall { b =>
       Eq[Attempt[DecodeResult[A]]].eqv(l.decode(b), r.decode(b))
     }
   }

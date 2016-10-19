@@ -26,7 +26,7 @@ lazy val core = crossProject.in(file(".")).
       "org.scodec" %%% "scodec-core" % "1.10.2",
       "org.typelevel" %%% "cats-core" % catsVersion,
       "org.typelevel" %%% "cats-laws" % catsVersion % "test",
-      "org.scalatest" %%% "scalatest" % "3.0.0-M7" % "test",
+      "org.scalatest" %%% "scalatest" % "3.0.0-M8" % "test",
       "org.typelevel" %%% "discipline" % "0.4" % "test"
     )
   ).
