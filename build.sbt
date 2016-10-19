@@ -7,7 +7,8 @@ val commonSettings = Seq(
   contributors ++= Seq(
     Contributor("mpilquist", "Michael Pilquist"),
     Contributor("durban", "Daniel Urban")
-  )
+  ),
+  crossScalaVersions := crossScalaVersions.value.filterNot { _.startsWith("2.12") } // Cats not yet built for 2.12
 )
 
 lazy val root = project.in(file(".")).aggregate(coreJVM, coreJS).settings(commonSettings: _*).settings(
