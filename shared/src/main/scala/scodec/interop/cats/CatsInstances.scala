@@ -36,8 +36,8 @@ private[cats] abstract class CatsInstances extends CatsInstancesLowPriority {
   implicit val ErrEqInstance: Eq[Err] = Eq.fromUniversalEquals
   implicit val ErrShowInstance: Show[Err] = Show.fromToString
 
-  implicit val AttemptMonadErrorInstance: MonadError[Attempt, Err] with RecursiveTailRecM[Attempt] = {
-    new MonadError[Attempt, Err] with RecursiveTailRecM[Attempt] {
+  implicit val AttemptMonadErrorInstance: MonadError[Attempt, Err] = {
+    new MonadError[Attempt, Err] {
       def pure[A](a: A) = Attempt.successful(a)
       def flatMap[A, B](fa: Attempt[A])(f: A => Attempt[B]) = fa flatMap f
       def raiseError[A](e: Err) = Attempt.failure(e)
@@ -92,7 +92,7 @@ private[cats] abstract class CatsInstances extends CatsInstancesLowPriority {
     s"DecodeResult(${res.value.show},${res.remainder.show})"
   }
 
-  implicit val DecoderMonadInstance: Monad[Decoder] with RecursiveTailRecM[Decoder] = new Monad[Decoder] with RecursiveTailRecM[Decoder] {
+  implicit val DecoderMonadInstance: Monad[Decoder] = new Monad[Decoder] {
 
     def pure[A](a: A) = Decoder.point(a)
 

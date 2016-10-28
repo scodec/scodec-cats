@@ -7,7 +7,7 @@ import _root_.cats.implicits._
 import _root_.cats.laws.discipline._
 import _root_.cats.kernel.Eq
 import _root_.cats.kernel.laws.GroupLaws
-import org.scalacheck.{ Arbitrary, Gen, Shrink }
+import org.scalacheck.{ Arbitrary, Cogen, Gen, Shrink }
 import Arbitrary.arbitrary
 import Shrink.shrink
 import org.scalatest.{ FunSuite, Matchers }
@@ -27,6 +27,9 @@ class CatsInstancesTests extends FunSuite with Matchers with Discipline {
   implicit lazy val shrinkByteVector: Shrink[ByteVector] = Shrink { b =>
     shrink(b.toArray) map { s => ByteVector(s) }
   }
+
+  implicit val cogenErr: Cogen[Err] =
+    Cogen[String].contramap(_.toString)
 
   // This is pretty dodgy...
   implicit def eqDecoder[A: Eq : Arbitrary]: Eq[Decoder[A]] = Eq.instance { (l, r) =>
