@@ -7,15 +7,14 @@ val commonSettings = Seq(
   contributors ++= Seq(
     Contributor("mpilquist", "Michael Pilquist"),
     Contributor("durban", "Daniel Urban")
-  ),
-  crossScalaVersions := crossScalaVersions.value.filterNot { _.startsWith("2.12") } // Cats not yet built for 2.12
+  )
 )
 
 lazy val root = project.in(file(".")).aggregate(coreJVM, coreJS).settings(commonSettings: _*).settings(
   publishArtifact := false
 )
 
-val catsVersion = "0.7.2"
+val catsVersion = "0.8.0"
 
 lazy val core = crossProject.in(file(".")).
   enablePlugins(BuildInfoPlugin).
@@ -24,11 +23,11 @@ lazy val core = crossProject.in(file(".")).
   jvmSettings(scodecPrimaryModuleJvm: _*).
   settings(
     libraryDependencies ++= Seq(
-      "org.scodec" %%% "scodec-core" % "1.10.2",
+      "org.scodec" %%% "scodec-core" % "1.10.3",
       "org.typelevel" %%% "cats-core" % catsVersion,
       "org.typelevel" %%% "cats-laws" % catsVersion % "test",
-      "org.scalatest" %%% "scalatest" % "3.0.0-M8" % "test",
-      "org.typelevel" %%% "discipline" % "0.4" % "test"
+      "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
+      "org.typelevel" %%% "discipline" % "0.7.1" % "test"
     )
   ).
   jvmSettings(
