@@ -6,7 +6,7 @@ import scodec.bits._
 import _root_.cats.implicits._
 import _root_.cats.laws.discipline._
 import _root_.cats.kernel.Eq
-import _root_.cats.kernel.laws.GroupLaws
+import _root_.cats.kernel.laws.discipline.MonoidTests
 import org.scalacheck.{ Arbitrary, Cogen, Gen, Shrink }
 import Arbitrary.arbitrary
 import Shrink.shrink
@@ -62,9 +62,9 @@ class CatsInstancesTests extends FunSuite with Matchers with Discipline {
     def eqv(x: (A, B, C), y: (A, B, C)) = A.eqv(x._1, y._1) && B.eqv(x._2, y._2) && C.eqv(x._3, y._3)
   }
 
-  checkAll("BitVector", GroupLaws[BitVector].monoid)
-  checkAll("ByteVector", GroupLaws[ByteVector].monoid)
-  checkAll("Decoder[Int]", GroupLaws[Decoder[Int]].monoid)
+  checkAll("BitVector", MonoidTests[BitVector].monoid)
+  checkAll("ByteVector", MonoidTests[ByteVector].monoid)
+  checkAll("Decoder[Int]", MonoidTests[Decoder[Int]].monoid)
   checkAll("Decoder", MonadTests[Decoder].monad[Int, Int, Int])
   checkAll("Attempt", MonadErrorTests[Attempt, Err].monadError[Int, Int, Int])
 }
