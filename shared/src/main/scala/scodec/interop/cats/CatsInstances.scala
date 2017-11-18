@@ -9,7 +9,7 @@ import scodec._
 import _root_.cats.kernel.{ Eq, Monoid, Semigroup }
 
 import _root_.cats._
-import _root_.cats.functor._
+import _root_.cats.arrow.Profunctor
 import _root_.cats.implicits._
 
 private[cats] abstract class CatsInstancesLowPriority {
