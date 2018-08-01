@@ -15,7 +15,7 @@ lazy val root = project.in(file(".")).aggregate(coreJVM, coreJS).settings(common
   publishArtifact := false
 )
 
-val catsVersion = "1.1.0"
+val catsVersion = "1.2.0"
 
 lazy val core = crossProject.in(file(".")).
   enablePlugins(BuildInfoPlugin).
