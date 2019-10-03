@@ -3,6 +3,7 @@ import sbtcrossproject.crossProject
 
 val commonSettings = Seq(
   scodecModule := "scodec-cats",
+  name := scodecModule.value,
   rootPackage := "scodec.cats",
   scmInfo := Some(ScmInfo(url("https://github.com/scodec/scodec-cats"), "git@github.com:scodec/scodec-cats.git")),
   contributors ++= Seq(
