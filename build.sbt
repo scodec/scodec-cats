@@ -1,34 +1,40 @@
 import com.typesafe.tools.mima.core._
-import com.typesafe.tools.mima.plugin.MimaKeys._
+import sbtcrossproject.crossProject
 
 val commonSettings = Seq(
   scodecModule := "scodec-cats",
   rootPackage := "scodec.cats",
+  scmInfo := Some(ScmInfo(url("https://github.com/scodec/scodec-cats"), "git@github.com:scodec/scodec-cats.git")),
   contributors ++= Seq(
     Contributor("mpilquist", "Michael Pilquist"),
     Contributor("durban", "Daniel Urban")
   ),
-  crossScalaVersions := crossScalaVersions.value.filterNot { _.startsWith("2.13") } // Cats not yet built for 2.13
+  scalacOptions --= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, v)) if v >= 13 =>
+        Seq("-Yno-adapted-args", "-Ywarn-unused-import")
+      case _ =>
+        Seq()
+    }
+  }
 )
 
 lazy val root = project.in(file(".")).aggregate(coreJVM, coreJS).settings(commonSettings: _*).settings(
   publishArtifact := false
 )
 
-val catsVersion = "1.2.0"
+val catsVersion = "2.0.0"
 
-lazy val core = crossProject.in(file(".")).
+lazy val core = crossProject(JSPlatform, JVMPlatform).in(file(".")).
   enablePlugins(BuildInfoPlugin).
+  enablePlugins(ScodecPrimaryModuleSettings).
   settings(commonSettings: _*).
-  settings(scodecPrimaryModule: _*).
-  jvmSettings(scodecPrimaryModuleJvm: _*).
   settings(
     libraryDependencies ++= Seq(
-      "org.scodec" %%% "scodec-core" % "1.10.3",
+      "org.scodec" %%% "scodec-core" % "1.11.4",
       "org.typelevel" %%% "cats-core" % catsVersion,
       "org.typelevel" %%% "cats-laws" % catsVersion % "test",
-      "org.scalatest" %%% "scalatest" % "3.0.3" % "test",
-      "org.typelevel" %%% "discipline" % "0.8" % "test"
+      "org.typelevel" %%% "discipline-scalatest" % "1.0.0-RC1" % "test"
     )
   ).
   jvmSettings(
@@ -40,11 +46,11 @@ lazy val core = crossProject.in(file(".")).
       """cats.*;version="$<range;[==,=+);$<@>>"""",
       "*"
     ),
-    binaryIssueFilters ++= Seq(
+    mimaBinaryIssueFilters ++= Seq(
     )
   ).
   jsSettings(commonJsSettings: _*)
 
-lazy val coreJVM = core.jvm
+lazy val coreJVM = core.jvm.enablePlugins(ScodecPrimaryModuleJVMSettings)
 lazy val coreJS = core.js
 

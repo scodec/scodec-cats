@@ -10,10 +10,11 @@ import _root_.cats.kernel.laws.discipline.MonoidTests
 import org.scalacheck.{ Arbitrary, Cogen, Gen, Shrink }
 import Arbitrary.arbitrary
 import Shrink.shrink
-import org.scalatest.{ FunSuite, Matchers }
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 import org.typelevel.discipline.scalatest.Discipline
 
-class CatsInstancesTests extends FunSuite with Matchers with Discipline {
+class CatsInstancesTests extends AnyFunSuite with Matchers with Discipline {
   implicit lazy val arbBitVector: Arbitrary[BitVector] =
     Arbitrary(Gen.containerOf[Array, Byte](arbitrary[Byte]).map { b => BitVector(b) })
 
