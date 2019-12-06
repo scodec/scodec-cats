@@ -36,8 +36,8 @@ private[cats] abstract class CatsInstances extends CatsInstancesLowPriority {
   implicit val ErrEqInstance: Eq[Err] = Eq.fromUniversalEquals
   implicit val ErrShowInstance: Show[Err] = Show.fromToString
 
-  implicit val AttemptMonadErrorInstance: MonadError[Attempt, Err] = {
-    new MonadError[Attempt, Err] {
+  implicit val AttemptMonadErrorTraverseInstance: MonadError[Attempt, Err] with Traverse[Attempt] = {
+    new MonadError[Attempt, Err] with Traverse[Attempt] {
       def pure[A](a: A) = Attempt.successful(a)
       def flatMap[A, B](fa: Attempt[A])(f: A => Attempt[B]) = fa flatMap f
       def raiseError[A](e: Err) = Attempt.failure(e)
@@ -52,8 +52,26 @@ private[cats] abstract class CatsInstances extends CatsInstancesLowPriority {
           case Attempt.Successful(Right(b)) => Attempt.Successful(b)
         }
       }
+
+      def traverse[G[_], A, B](fa: Attempt[A])(f: A => G[B])(implicit G: Applicative[G]): G[Attempt[B]] =
+        fa match {
+          case fail@Attempt.Failure(_) => G.pure(fail)
+          case Attempt.Successful(value) => G.map(f(value))(Attempt.Successful(_))
+        }
+
+      def foldLeft[A, B](fa: Attempt[A], b: B)(f: (B, A) => B): B = fa match {
+        case Attempt.Failure(_) => b
+        case Attempt.Successful(value) => f(b, value)
+      }
+
+      def foldRight[A, B](fa: Attempt[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B] = fa match {
+        case Attempt.Failure(_) => lb
+        case Attempt.Successful(value) => f(value, lb)
+      }
     }
   }
+
+  private[cats] val AttemptMonadErrorInstance: MonadError[Attempt, Err] = AttemptMonadErrorTraverseInstance
 
   implicit def AttemptEqInstance[A: Eq]: Eq[Attempt[A]] = Eq.instance { (l, r) =>
     l match {
