@@ -66,6 +66,6 @@ class CatsInstancesTests extends AnyFunSuite with Matchers with Discipline {
   checkAll("BitVector", MonoidTests[BitVector].monoid)
   checkAll("ByteVector", MonoidTests[ByteVector].monoid)
   checkAll("Decoder[Int]", MonoidTests[Decoder[Int]].monoid)
-  checkAll("Decoder", MonadTests[Decoder].monad[Int, Int, Int])
+  checkAll("Decoder", MonadErrorTests[Decoder, Err].monadError[Int, Int, Int])
   checkAll("Attempt", MonadErrorTests[Attempt, Err].monadError[Int, Int, Int])
 }
