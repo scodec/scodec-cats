@@ -34,8 +34,8 @@ lazy val core = crossProject(JSPlatform, JVMPlatform).in(file(".")).
     libraryDependencies ++= Seq(
       "org.scodec" %%% "scodec-core" % "1.11.4",
       "org.typelevel" %%% "cats-core" % catsVersion,
-      "org.typelevel" %%% "cats-laws" % catsVersion % "test",
-      "org.typelevel" %%% "discipline-scalatest" % "1.0.0-RC1" % "test"
+      "org.typelevel" %%% "cats-laws" % catsVersion % Test,
+      "org.typelevel" %%% "discipline-scalatest" % "1.0.1" % Test,
     )
   ).
   jvmSettings(

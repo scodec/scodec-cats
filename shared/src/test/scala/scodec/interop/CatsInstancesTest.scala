@@ -12,9 +12,10 @@ import Arbitrary.arbitrary
 import Shrink.shrink
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import org.typelevel.discipline.scalatest.Discipline
+import org.typelevel.discipline.scalatest.FunSuiteDiscipline
+import org.scalatestplus.scalacheck.Checkers
 
-class CatsInstancesTests extends AnyFunSuite with Matchers with Discipline {
+class CatsInstancesTests extends AnyFunSuite with Matchers with Checkers with FunSuiteDiscipline {
   implicit lazy val arbBitVector: Arbitrary[BitVector] =
     Arbitrary(Gen.containerOf[Array, Byte](arbitrary[Byte]).map { b => BitVector(b) })
 
