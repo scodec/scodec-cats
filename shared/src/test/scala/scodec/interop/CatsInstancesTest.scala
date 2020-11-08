@@ -68,5 +68,6 @@ class CatsInstancesTests extends AnyFunSuite with Matchers with Checkers with Fu
   checkAll("ByteVector", MonoidTests[ByteVector].monoid)
   checkAll("Decoder[Int]", MonoidTests[Decoder[Int]].monoid)
   checkAll("Decoder", MonadErrorTests[Decoder, Err].monadError[Int, Int, Int])
-  checkAll("Attempt", MonadErrorTests[Attempt, Err].monadError[Int, Int, Int])
+  checkAll("Attempt (MonadError)", MonadErrorTests[Attempt, Err].monadError[Int, Int, Int])
+  checkAll("Attempt (Traverse)", TraverseTests[Attempt].traverse[Int, Int, Int, Int, Option, Option])
 }
