@@ -99,4 +99,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
 
 lazy val coreJVM = core.jvm
 lazy val coreJS =
-  core.js.settings(crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2.")))
+  core.js.settings(
+    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)),
+    crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2."))
+  )
