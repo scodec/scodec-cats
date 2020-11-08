@@ -1,5 +1,6 @@
-resolvers += "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/"
-
-addSbtPlugin("org.scodec" % "scodec-build" % "1.14.0")
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.29")
-addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "0.6.0")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.3.0")
+addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "1.0.0")
+addSbtPlugin("com.typesafe.sbt" % "sbt-osgi" % "0.9.6")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2")
+addSbtPlugin("com.codecommit" % "sbt-github-actions" % "0.9.4")
+addSbtPlugin("com.codecommit" % "sbt-spiewak-sonatype" % "0.17.0")
