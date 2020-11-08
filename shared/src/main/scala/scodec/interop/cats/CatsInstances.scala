@@ -47,7 +47,8 @@ private[cats] abstract class CatsInstancesLowPriority {
 
 private[cats] abstract class CatsInstances extends CatsInstancesLowPriority {
 
-  implicit val BitVectorEqInstance: Eq[BitVector] = Eq.fromUniversalEquals // TODO: remove, deprecated by BitVectorOrderInstance
+  implicit val BitVectorEqInstance: Eq[BitVector] =
+    Eq.fromUniversalEquals // TODO: remove, deprecated by BitVectorOrderInstance
   implicit val BitVectorOrderInstance: Order[BitVector] = Order.fromComparable[BitVector]
   implicit val BitVectorShowInstance: Show[BitVector] = Show.fromToString
   implicit val BitVectorMonoidInstance: Monoid[BitVector] = new Monoid[BitVector] {
@@ -55,7 +56,8 @@ private[cats] abstract class CatsInstances extends CatsInstancesLowPriority {
     def combine(x: BitVector, y: BitVector) = x ++ y
   }
 
-  implicit val ByteVectorEqInstance: Eq[ByteVector] = Eq.fromUniversalEquals // TODO: remove, deprecated by ByteVectorEqInstance
+  implicit val ByteVectorEqInstance: Eq[ByteVector] =
+    Eq.fromUniversalEquals // TODO: remove, deprecated by ByteVectorEqInstance
   implicit val ByteVectorOrderInstance: Order[ByteVector] = Order.fromComparable[ByteVector]
   implicit val ByteVectorShowInstance: Show[ByteVector] = Show.fromToString
   implicit val ByteVectorMonoidInstance: Monoid[ByteVector] = new Monoid[ByteVector] {
