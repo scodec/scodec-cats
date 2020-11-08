@@ -60,7 +60,6 @@ ThisBuild / testFrameworks += new TestFramework("munit.Framework")
 ThisBuild / publishGithubUser := "mpilquist"
 ThisBuild / publishFullName := "Michael Pilquist"
 ThisBuild / developers ++= List(
-  "mpilquist" -> "Michael Pilquist",
   "durban" -> "Daniel Urban"
 ).map { case (username, fullName) =>
   Developer(username, fullName, s"@$username", url(s"https://github.com/$username"))
