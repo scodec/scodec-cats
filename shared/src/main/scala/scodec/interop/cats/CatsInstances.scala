@@ -110,7 +110,7 @@ private[cats] abstract class CatsInstances extends CatsInstancesLowPriority {
     s"DecodeResult(${res.value.show},${res.remainder.show})"
   }
 
-  implicit val DecoderMonadInstance: Monad[Decoder] = new Monad[Decoder] {
+  implicit val DecoderMonadErrorInstance: MonadError[Decoder, Err] = new MonadError[Decoder, Err] {
 
     def pure[A](a: A) = Decoder.point(a)
 
@@ -128,7 +128,18 @@ private[cats] abstract class CatsInstances extends CatsInstancesLowPriority {
         }
       }
     }
+
+    def raiseError[A](e: Err): Decoder[A] = new Decoder[A] {
+      def decode(bits: BitVector): Attempt[DecodeResult[A]] = Attempt.failure(e)
+    }
+
+    def handleErrorWith[A](fa: Decoder[A])(f: Err => Decoder[A]): Decoder[A] = new Decoder[A]{
+      def decode(bits: BitVector): Attempt[DecodeResult[A]] =
+        fa.decode(bits).fold(f(_).decode(bits), Attempt.Successful(_))
+    }
   }
+
+  private[cats] val DecoderMonadInstance: Monad[Decoder] = DecoderMonadErrorInstance
 
   implicit def DecoderMonoidInstance[A](implicit A: Monoid[A]): Monoid[Decoder[A]] =
     new DecoderSemigroup[A]() with Monoid[Decoder[A]] {
