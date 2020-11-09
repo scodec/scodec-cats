@@ -75,6 +75,7 @@ lazy val root = project.in(file(".")).aggregate(coreJVM, coreJS).settings(noPubl
 lazy val core = crossProject(JSPlatform, JVMPlatform)
   .in(file("."))
   .enablePlugins(SbtOsgi)
+  .settings(name := "scodec-cats")
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
