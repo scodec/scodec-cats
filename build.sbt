@@ -12,40 +12,24 @@ ThisBuild / organizationName := "Scodec"
 ThisBuild / homepage := Some(url("https://github.com/scodec/scodec-cats"))
 ThisBuild / startYear := Some(2013)
 
-ThisBuild / crossScalaVersions := Seq("2.12.11", "2.13.3", "3.0.0-M1")
+ThisBuild / crossScalaVersions := Seq("2.12.11", "2.13.3", "3.0.0-M1", "3.0.0-M2")
 
 ThisBuild / strictSemVer := false
 
 ThisBuild / versionIntroduced := Map(
-  "3.0.0-M1" -> "1.1.99"
+  "3.0.0-M1" -> "1.1.99",
+  "3.0.0-M2" -> "1.1.99"
 )
 
 ThisBuild / githubWorkflowJavaVersions := Seq("adopt@1.8")
-
-ThisBuild / githubWorkflowPublishTargetBranches := Seq(
-  RefPredicate.Equals(Ref.Branch("main")),
-  RefPredicate.StartsWith(Ref.Tag("v"))
-)
 
 ThisBuild / githubWorkflowBuild := Seq(
   WorkflowStep.Sbt(List("fmtCheck", "test", "+mimaReportBinaryIssues"))
 )
 
-ThisBuild / githubWorkflowEnv ++= Map(
-  "SONATYPE_USERNAME" -> s"$${{ secrets.SONATYPE_USERNAME }}",
-  "SONATYPE_PASSWORD" -> s"$${{ secrets.SONATYPE_PASSWORD }}",
-  "PGP_SECRET" -> s"$${{ secrets.PGP_SECRET }}"
-)
+ThisBuild / spiewakCiReleaseSnapshots := true
 
-ThisBuild / githubWorkflowTargetTags += "v*"
-
-ThisBuild / githubWorkflowPublishPreamble +=
-  WorkflowStep.Run(
-    List("echo $PGP_SECRET | base64 -d | gpg --import"),
-    name = Some("Import signing key")
-  )
-
-ThisBuild / githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("release")))
+ThisBuild / spiewakMainBranches := List("main")
 
 ThisBuild / scmInfo := Some(
   ScmInfo(url("https://github.com/scodec/scodec-cats"), "git@github.com:scodec/scodec-cats.git")
@@ -70,7 +54,8 @@ ThisBuild / fatalWarningsInCI := false
 ThisBuild / mimaBinaryIssueFilters ++= Seq(
 )
 
-lazy val root = project.in(file(".")).aggregate(coreJVM, coreJS).settings(noPublishSettings)
+lazy val root =
+  project.in(file(".")).aggregate(coreJVM, coreJS).enablePlugins(NoPublishPlugin, SonatypeCiRelease)
 
 lazy val core = crossProject(JSPlatform, JVMPlatform)
   .in(file("."))
@@ -80,11 +65,11 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= Seq(
-      "org.scodec" %%% "scodec-bits" % "1.1.21",
-      "org.scodec" %%% "scodec-core" % (if (isDotty.value) "2.0.0-M1" else "1.11.7"),
-      "org.typelevel" %%% "cats-core" % "2.3.0-M2",
-      "org.typelevel" %%% "cats-laws" % "2.3.0-M2" % Test,
-      "org.typelevel" %%% "discipline-munit" % "1.0.1" % Test
+      "org.scodec" %%% "scodec-bits" % "1.1.22",
+      "org.scodec" %%% "scodec-core" % (if (isDotty.value) "2.0.0-M2" else "1.11.7"),
+      "org.typelevel" %%% "cats-core" % "2.3.0",
+      "org.typelevel" %%% "cats-laws" % "2.3.0" % Test,
+      "org.typelevel" %%% "discipline-munit" % "1.0.3" % Test
     )
   )
   .jvmSettings(osgiSettings)
@@ -101,6 +86,5 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
 lazy val coreJVM = core.jvm
 lazy val coreJS =
   core.js.settings(
-    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)),
-    crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2."))
+    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
   )
