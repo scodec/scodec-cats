@@ -12,13 +12,12 @@ ThisBuild / organizationName := "Scodec"
 ThisBuild / homepage := Some(url("https://github.com/scodec/scodec-cats"))
 ThisBuild / startYear := Some(2013)
 
-ThisBuild / crossScalaVersions := Seq("2.12.11", "2.13.3", "3.0.0-M1", "3.0.0-M2")
+ThisBuild / crossScalaVersions := Seq("2.12.11", "2.13.3", "3.0.0-M3")
 
 ThisBuild / strictSemVer := false
 
 ThisBuild / versionIntroduced := Map(
-  "3.0.0-M1" -> "1.1.99",
-  "3.0.0-M2" -> "1.1.99"
+  "3.0.0-M3" -> "1.1.99"
 )
 
 ThisBuild / githubWorkflowJavaVersions := Seq("adopt@1.8")
@@ -68,11 +67,11 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= Seq(
-      "org.scodec" %%% "scodec-bits" % "1.1.22",
-      "org.scodec" %%% "scodec-core" % (if (isDotty.value) "2.0.0-M2" else "1.11.7"),
-      "org.typelevel" %%% "cats-core" % "2.3.0",
-      "org.typelevel" %%% "cats-laws" % "2.3.0" % Test,
-      "org.typelevel" %%% "discipline-munit" % "1.0.3" % Test
+      "org.scodec" %%% "scodec-bits" % "1.1.23",
+      "org.scodec" %%% "scodec-core" % (if (isDotty.value) "2.0.0-M3" else "1.11.7"),
+      "org.typelevel" %%% "cats-core" % "2.3.1",
+      "org.typelevel" %%% "cats-laws" % "2.3.1" % Test,
+      "org.typelevel" %%% "discipline-munit" % "1.0.4" % Test
     )
   )
   .jvmSettings(osgiSettings)
