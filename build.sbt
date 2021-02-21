@@ -12,7 +12,7 @@ ThisBuild / organizationName := "Scodec"
 ThisBuild / homepage := Some(url("https://github.com/scodec/scodec-cats"))
 ThisBuild / startYear := Some(2013)
 
-ThisBuild / crossScalaVersions := Seq("2.12.11", "2.13.3", "3.0.0-M3")
+ThisBuild / crossScalaVersions := Seq("2.12.13", "2.13.4", "3.0.0-M3", "3.0.0-RC1")
 
 ThisBuild / strictSemVer := false
 
@@ -67,11 +67,11 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= Seq(
-      "org.scodec" %%% "scodec-bits" % "1.1.23",
-      "org.scodec" %%% "scodec-core" % (if (isDotty.value) "2.0.0-M3" else "1.11.7"),
-      "org.typelevel" %%% "cats-core" % "2.3.1",
-      "org.typelevel" %%% "cats-laws" % "2.3.1" % Test,
-      "org.typelevel" %%% "discipline-munit" % "1.0.4" % Test
+      "org.scodec" %%% "scodec-bits" % "1.1.24",
+      "org.scodec" %%% "scodec-core" % (if (isDotty.value) "2.0.0-RC1" else "1.11.7"),
+      "org.typelevel" %%% "cats-core" % "2.4.2",
+      "org.typelevel" %%% "cats-laws" % "2.4.2" % Test,
+      "org.typelevel" %%% "discipline-munit" % "1.0.6" % Test
     )
   )
   .jvmSettings(osgiSettings)
