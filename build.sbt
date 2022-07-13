@@ -12,7 +12,7 @@ ThisBuild / organizationName := "Scodec"
 ThisBuild / homepage := Some(url("https://github.com/scodec/scodec-cats"))
 ThisBuild / startYear := Some(2013)
 
-ThisBuild / crossScalaVersions := Seq("2.12.13", "2.13.5", "3.0.0")
+ThisBuild / crossScalaVersions := Seq("2.12.13", "2.13.5", "3.1.3")
 
 ThisBuild / strictSemVer := false
 
