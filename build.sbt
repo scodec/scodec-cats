@@ -63,10 +63,10 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= Seq(
-      "org.scodec" %%% "scodec-bits" % "1.1.27",
-      "org.scodec" %%% "scodec-core" % (if (isDotty.value) "2.0.0" else "1.11.7"),
-      "org.typelevel" %%% "cats-core" % "2.6.1",
-      "org.typelevel" %%% "cats-laws" % "2.6.1" % Test,
+      "org.scodec" %%% "scodec-bits" % "1.1.34",
+      "org.scodec" %%% "scodec-core" % (if (isDotty.value) "2.1.0" else "1.11.7"),
+      "org.typelevel" %%% "cats-core" % "2.8.0",
+      "org.typelevel" %%% "cats-laws" % "2.8.0" % Test,
       "org.typelevel" %%% "discipline-munit" % "1.0.9" % Test
     )
   )
