@@ -10,7 +10,7 @@ ThisBuild / tlSonatypeUseLegacyHost := true
 ThisBuild / homepage := Some(url("https://github.com/scodec/scodec-cats"))
 ThisBuild / startYear := Some(2013)
 
-ThisBuild / crossScalaVersions := Seq("2.12.16", "2.13.8", "3.1.3")
+ThisBuild / crossScalaVersions := Seq("2.12.18", "2.13.12", "3.3.1")
 ThisBuild / tlVersionIntroduced := List("2.12", "2.13", "3").map(_ -> "1.1.0").toMap
 
 ThisBuild / licenses := List(
@@ -31,7 +31,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(name := "scodec-cats")
   .settings(
     libraryDependencies ++= Seq(
-      "org.scodec" %%% "scodec-bits" % "1.1.34",
+      "org.scodec" %%% "scodec-bits" % "1.1.38",
       "org.scodec" %%% "scodec-core" % (if (tlIsScala3.value) "2.2.0" else "1.11.10"),
       "org.typelevel" %%% "cats-core" % "2.8.0",
       "org.typelevel" %%% "cats-laws" % "2.8.0" % Test,
