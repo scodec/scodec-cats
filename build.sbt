@@ -32,7 +32,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     libraryDependencies ++= Seq(
       "org.scodec" %%% "scodec-bits" % "1.1.38",
-      "org.scodec" %%% "scodec-core" % (if (tlIsScala3.value) "2.2.0" else "1.11.10"),
+      "org.scodec" %%% "scodec-core" % (if (tlIsScala3.value) "2.2.2" else "1.11.10"),
       "org.typelevel" %%% "cats-core" % "2.10.0",
       "org.typelevel" %%% "cats-laws" % "2.10.0" % Test,
       "org.typelevel" %%% "discipline-munit" % "2.0.0-M3" % Test
