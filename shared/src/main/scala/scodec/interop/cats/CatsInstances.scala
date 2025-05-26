@@ -108,12 +108,12 @@ private[cats] abstract class CatsInstances extends CatsInstancesLowPriority {
       case Attempt.Successful(la) =>
         r match {
           case Attempt.Successful(ra) => Eq[A].eqv(la, ra)
-          case Attempt.Failure(re)    => false
+          case Attempt.Failure(_)     => false
         }
       case Attempt.Failure(le) =>
         r match {
-          case Attempt.Successful(ra) => false
-          case Attempt.Failure(re)    => Eq[Err].eqv(le, re)
+          case Attempt.Successful(_) => false
+          case Attempt.Failure(re)   => Eq[Err].eqv(le, re)
         }
     }
   }

@@ -62,8 +62,8 @@ class CatsInstancesTests extends DisciplineSuite {
     Cogen[String].contramap(_.toString)
 
   // This is pretty dodgy...
-  implicit def eqDecoder[A: Eq: Arbitrary]: Eq[Decoder[A]] = Eq.instance { (l, r) =>
-    Stream.continually(arbitrary[BitVector].sample).flatten.take(100).forall { b =>
+  implicit def eqDecoder[A: Eq]: Eq[Decoder[A]] = Eq.instance { (l, r) =>
+    LazyList.continually(arbitrary[BitVector].sample).flatten.take(100).forall { b =>
       Eq[Attempt[DecodeResult[A]]].eqv(l.decode(b), r.decode(b))
     }
   }
