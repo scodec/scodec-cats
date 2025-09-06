@@ -38,5 +38,5 @@ lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     )
   )
   .nativeSettings(
-    tlVersionIntroduced := List("2.12", "2.13", "3").map(_ -> "1.2.0").toMap
+    tlVersionIntroduced := List("2.12", "2.13", "3").map(_ -> "1.3.0").toMap
   )
